@@ -16,6 +16,7 @@ class Point:
 	"""
 	Point class used to represent x-y coordinates
 	"""
+
 	def __init__(self, x, y):
 		self.x = x
 		self.y = y
@@ -66,7 +67,7 @@ def generate_points(uniform: bool = False) -> tuple[Point, tuple[int, int, int]]
 	for i in range(seeds):
 		if uniform:
 			yield Point((i // seed_sqrt) * (w / seed_sqrt) + (w / (seed_sqrt * 2)),
-			            (i % seed_sqrt) * (h / seed_sqrt) + (h / (seed_sqrt * 2))),(generate_color())
+			            (i % seed_sqrt) * (h / seed_sqrt) + (h / (seed_sqrt * 2))), (generate_color())
 		else:
 			yield Point(randint(50, w - 50), randint(50, h - 50)), (generate_color())
 
@@ -86,12 +87,13 @@ running = 2  # States for the loop, 0 == exit, 1 == done drawing, 2 == running, 
 r = size * 2
 marker = Point(-1, -1)  # Marks the end of a drawing cycle, put into the queue at each integer radius
 max_r = distance(Point(0, 0), Point(w, h))  # Maximum possible distance
-points: list[tuple[Point, tuple[int, int, int]]] = [(point, color) for (point, color) in generate_points(True)]  # Generate seed points
+points: list[tuple[Point, tuple[int, int, int]]] = [(point, color) for (point, color) in
+                                                    generate_points(True)]  # Generate seed points
 queue = PriorityQueue()
 for point in points:
 	queue.put((0, point[0]))  # Place seed points in queue
 queue.put((r, marker))  # First marker
-min_point = (Point(w, h),(0,0,0))  # Initial condition of smallest point
+min_point = (Point(w, h), (0, 0, 0))  # Initial condition of smallest point
 drawn_points = set([point[0] for point in points])  # Keep track of drawn points to prevent redrawing
 
 canvas.fill("white")
