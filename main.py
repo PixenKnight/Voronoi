@@ -24,6 +24,7 @@ def distance(p1, p2, func="euclidean"):
 		raise ValueError("Invalid distance function")
 
 
+# Function used to generate random colors. Random samples are kinda ugly but it works.
 def generate_colors():
 	return randint(100, 255), randint(100, 255), randint(100, 255)
 
