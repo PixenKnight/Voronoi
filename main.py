@@ -10,6 +10,7 @@ w = 900
 h = 900
 size = 2
 seeds = 16
+dev_mode = True
 
 
 class Point:
@@ -40,7 +41,7 @@ class Point:
 
 # Function to check if a coordinate is within the canvas
 def in_canvas(coordinate: Point):
-	return (0 <= coordinate.x <= w) and (0 <= coordinate.y <= h)
+	return (-size <= coordinate.x <= w) and (-size <= coordinate.y <= h)
 
 
 # Distance functions for calculating distances between points
@@ -77,8 +78,8 @@ pygame.init()
 canvas = pygame.display.set_mode((w, h), vsync=True)
 
 # Benchmark timers
-end_time = 0
-start_time = time.time()
+if dev_mode:
+	start_time = time.time()
 
 # Setup for queue and main loop
 #   The queue is a PriorityQueue, where the priority number is equal to an increasing radius.
@@ -88,7 +89,7 @@ r = size * 2
 marker = Point(-1, -1)  # Marks the end of a drawing cycle, put into the queue at each integer radius
 max_r = distance(Point(0, 0), Point(w, h))  # Maximum possible distance
 points: list[tuple[Point, tuple[int, int, int]]] = [(point, color) for (point, color) in
-                                                    generate_points(True)]  # Generate seed points
+                                                    generate_points(dev_mode)]  # Generate seed points
 queue = PriorityQueue()
 for point in points:
 	queue.put((0, point[0]))  # Place seed points in queue
@@ -114,6 +115,10 @@ while running > 0:
 		curr = queue.get()[1]
 		if curr == marker:  # Only markers at this point, done drawing
 			running = 1
+			print("Done!")
+			if dev_mode:
+				end_time = time.time()
+				print("Time taken: ", end_time - start_time)
 		while curr != marker:  # Points remaining to be drawn at this radius
 			min_dst = max_r
 			for point in points:
@@ -159,9 +164,6 @@ while running > 0:
 			pygame.draw.circle(canvas, "black", point[0].to_tuple(), 3)  # Seed points are drawn over everything else
 
 		pygame.display.flip()
-	elif end_time == 0 and running == 1:  # Done drawing, can print benchmark time
-		end_time = time.time()
-		print("Time taken: ", end_time - start_time)
 
 	if running > 3:  # Stepped through the simulation, revert to paused state
 		running = 3
